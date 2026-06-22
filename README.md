@@ -6,6 +6,7 @@ Huynh Ngoc Phuong Thao - 104240544
 
 Tran Khanh Doan - 104240544
 
+
 # Smart Blind Assistance Cane
 
 An IoT-based smart cane designed to assist visually impaired people by detecting nearby obstacles and providing real-time alerts through vibration and sound.

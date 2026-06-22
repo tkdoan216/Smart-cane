@@ -1,7 +1,9 @@
 # Members
 
 Huynh Minh Duc - 104240434
+
 Huynh Ngoc Phuong Thao - 104240544
+
 Tran Khanh Doan - 104240544
 
 # Smart Blind Assistance Cane

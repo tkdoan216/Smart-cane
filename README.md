@@ -1,38 +1,80 @@
-# Members
-
-Huynh Minh Duc - 104240434
-
-Huynh Ngoc Phuong Thao - 104240544
-
-Tran Khanh Doan - 104240544
-
-
 # Smart Blind Assistance Cane
 
-An IoT-based smart cane designed to assist visually impaired people by detecting nearby obstacles and providing real-time alerts through vibration and sound.
+An IoT smart cane project for assisting visually impaired users. The system includes:
 
-The system uses two distance sensors: an ultrasonic sensor and a VL53L0X laser ToF sensor. Both sensors work together to improve obstacle detection accuracy and user safety.
+- An ESP32-based cane firmware that reads obstacle sensors and controls vibration / buzzer alerts.
+- An Expo React Native mobile app that connects to the sensor hub over BLE and displays sensor data.
 
-## Features
+## Members
 
-- Detects obstacles in front of the cane
-- Uses two sensors for better distance measurement
-- Selects the safer and more reliable distance value
-- Provides vibration feedback based on obstacle distance
-- Includes an SOS button with buzzer alert
-- Can continue working even if one distance sensor fails
+- Huynh Minh Duc - 104240434
+- Huynh Ngoc Phuong Thao - 104240544
+- Tran Khanh Doan - 104240544
 
-## Hardware Components
+## Repository Structure
+
+```text
+.
+|-- app/                  # Expo Router screens
+|-- assets/               # App images and fonts
+|-- components/           # Shared React Native components
+|-- constants/            # App constants
+|-- hooks/                # Shared React hooks
+|-- android/              # Expo prebuild Android project
+|-- firmware/
+|   `-- arduino/          # ESP32 / Arduino firmware
+|-- scripts/              # Project helper scripts
+|-- app.json              # Expo configuration
+|-- package.json          # Mobile app dependencies and scripts
+`-- tsconfig.json         # TypeScript configuration
+```
+
+## Mobile App
+
+The mobile app is built with Expo, React Native, Expo Router, and `react-native-ble-plx`.
+
+### Features
+
+- Scans for the BLE device named `Vietduino_Sensor_Hub`.
+- Connects to the configured BLE service and characteristic.
+- Reads sensor data from the cane and displays the latest JSON payload.
+- Includes text-to-speech support through `react-native-tts`.
+
+### Setup
+
+```bash
+npm install
+npm start
+```
+
+Useful scripts:
+
+```bash
+npm run android
+npm run ios
+npm run web
+npm run lint
+```
+
+## Firmware
+
+The Arduino firmware is located at:
+
+```text
+firmware/arduino/smartcanearduino.ino
+```
+
+### Hardware Components
 
 - ESP32 Vietduino
-- HC-SR04 Ultrasonic Sensor
-- VL53L0X Laser ToF Distance Sensor
-- Vibration Motor Module
-- SOS Button / Joystick Button
+- HC-SR04 ultrasonic sensor
+- VL53L0X laser ToF distance sensor
+- Vibration motor module
+- SOS button / joystick button
 - Buzzer
-- Jumper Wires
+- Jumper wires
 
-## Wiring
+### Wiring
 
 | Component | ESP32 Pin |
 |---|---|
@@ -49,69 +91,26 @@ The system uses two distance sensors: an ultrasonic sensor and a VL53L0X laser T
 | Buzzer + | IO26 |
 | Buzzer - | GND |
 
-## Distance Detection Logic
+### Distance Detection Logic
 
-The cane uses both the ultrasonic sensor and the VL53L0X laser sensor to measure the distance to obstacles.
-
-The ultrasonic sensor is useful for detecting larger objects and obstacles at a longer range.  
-The VL53L0X laser ToF sensor is useful for detecting smaller or lower obstacles with better short-range accuracy.
-
-Both sensors are read at the same time. After that, the system chooses the final distance using this logic:
+The cane reads both the ultrasonic sensor and the VL53L0X laser sensor, then chooses the safest valid distance.
 
 | Sensor Condition | Selected Distance |
 |---|---|
-| Both sensors work | Choose the smaller distance |
-| Ultrasonic fails | Use VL53L0X distance |
-| VL53L0X fails | Use ultrasonic distance |
-| Both sensors fail | Distance is unknown |
+| Both sensors work | Smaller distance |
+| Ultrasonic fails | VL53L0X distance |
+| VL53L0X fails | Ultrasonic distance |
+| Both sensors fail | Unknown |
 
-The smaller distance is selected when both sensors work because safety is the priority. If one sensor detects an obstacle closer than the other sensor, the cane should warn the user based on the closer object.
-
-## Warning Logic
-
-After selecting the best distance, the system controls the vibration motor:
+### Warning Logic
 
 | Distance | Status | Motor Feedback |
 |---|---|---|
-| Less than 10 cm | Strong Warning | Strong continuous vibration |
-| 10 cm to 30 cm | Normal Warning | Light intermittent vibration |
+| Less than 10 cm | Strong warning | Strong continuous vibration |
+| 10 cm to 30 cm | Normal warning | Light intermittent vibration |
 | More than 30 cm | Safe | No vibration |
 | Unknown | Unknown | Motor off |
 
-## SOS Button Logic
+## Notes
 
-The cane also includes an SOS button.
-
-When the SOS button is pressed:
-
-1. ESP32 detects the button input.
-2. The buzzer is activated.
-3. The buzzer produces a beep-beep alert sound.
-4. This can be used as an emergency warning signal.
-
-## How the System Works
-
-1. ESP32 starts the system.
-2. The ultrasonic sensor measures obstacle distance.
-3. The VL53L0X laser sensor measures obstacle distance.
-4. ESP32 compares both sensor values.
-5. The closer valid distance is selected.
-6. The vibration motor gives feedback based on distance.
-7. If the SOS button is pressed, the buzzer creates an alert sound.
-
-## Code Structure
-
-The Arduino code includes these main functions:
-
-| Function | Purpose |
-|---|---|
-| `readUltrasonic()` | Reads distance from the HC-SR04 ultrasonic sensor |
-| `readLaser()` | Reads distance from the VL53L0X laser sensor |
-| `getBestDistance()` | Compares both sensor values and selects the safest distance |
-| `controlMotor()` | Controls vibration feedback based on distance |
-| `beepBeep()` | Activates the buzzer for SOS alert |
-
-## Arduino Code Location
-
-```text
-smartcanearduino/smartcanearduino.ino
+Generated dependencies and build outputs are intentionally excluded from Git. Run `npm install` and rebuild native projects locally when needed.

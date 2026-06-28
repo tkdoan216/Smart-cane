@@ -75,7 +75,7 @@ int getBestDistance(long ultrasonic, int laser) {
   if (ultrasonic == -1) return laser;
   if (laser == -1) return ultrasonic;
 
-  // Lấy khoảng cách nhỏ hơn để an toàn hơn
+  // Use the smaller distance for safer obstacle warnings.
   return min((int)ultrasonic, laser);
 }
 
@@ -86,19 +86,19 @@ void controlMotor(int distance) {
   }
 
   if (distance < 10) {
-    // Rung mạnh liên tục
+    // Strong continuous vibration.
     digitalWrite(MOTOR_PIN, HIGH);
     delay(100);
 
   } else if (distance <= 30) {
-    // Rung nhẹ ngắt quãng
+    // Light intermittent vibration.
     digitalWrite(MOTOR_PIN, HIGH);
     delay(100);
     digitalWrite(MOTOR_PIN, LOW);
     delay(300);
 
   } else {
-    // An toàn
+    // Safe range.
     digitalWrite(MOTOR_PIN, LOW);
     delay(200);
   }
@@ -141,7 +141,7 @@ void setup() {
 }
 
 void loop() {
-  // Nhấn nút SOS thì buzzer kêu beep beep
+  // Pressing the SOS button triggers the buzzer alert.
   if (digitalRead(BUTTON_PIN) == LOW) {
     Serial.println("SOS BUTTON PRESSED - BEEP BEEP");
     beepBeep();
